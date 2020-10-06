@@ -1,7 +1,6 @@
 rm(list = ls()) 
 
 setwd("/.../Data/")
-setwd("C:/Users/James/Documents/GitHub/MetabolicDependencies/Data")
 all_data_in <- data.table::fread(file = "CCLE_expression_19Q4.csv", header=T, sep = ",")
 cell_line_info <- read.csv(file = "sample_info.csv", header = T)
 
