@@ -19,11 +19,11 @@ cell_line_info$media <- substr(cell_line_info$culture_medium,1,4)
 mediums <- unique(cell_line_info$media)
 
 
-subset.cell.line.info <- dplyr::select(cell_line_info,matches("DepMap_ID"),matches("CCLE.Name"),matches("stripped_cell_line_name"),
+subset.cell.line.info <- dplyr::select(cell_line_info,matches("DepMap_ID"),matches("CCLE_Name"),matches("stripped_cell_line_name"),
                                 matches("culture_medium"),matches("media"), matches("culture_type"))
 
 all_data_in <- merge(subset.cell.line.info, all_data_in, by = "DepMap_ID")
-row.names(all_data_in) <- all_data_in$CCLE.Name
+row.names(all_data_in) <- all_data_in$CCLE_Name
 
 
 #Tweak characters in culture type
@@ -389,11 +389,14 @@ for (p in 1:length(types.of.culture)){
     data_in$Gene <- rownames(data_in)
     
     #reorder colnames for ssGSEA function
-    data_in <- data_in[,c("Gene",colnames(data_in)[1:372])]
+    data_in <- data_in[,c("Gene",colnames(data_in)[1:length(data_in)-1])]
     
     ssGSEA_temp <- ssGSEA_custom(data_in, all_pathways)
     
     GSEA.res.temp <- ssGSEA_temp$GSEA.Results
+    
+    GSEA.res.temp$Media <- mediums.filtered[M]
+    GSEA.res.temp$Culture_type <- types.of.culture[p]
     
     GSEA.res.all <- rbind(GSEA.res.all, GSEA.res.temp)
 

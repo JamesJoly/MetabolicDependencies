@@ -3,7 +3,6 @@ rm(list=ls(all=TRUE))
 setwd("/.../Data/")
 all_pathways <- GSA::GSA.read.gmt("KEGG_metabolic_pathways.gmt")
 
-setwd("/.../ExpressionGSEA/")
 data_in <- read.csv(file = "Corr_coefficients_NES_to_CERES.csv", header=T, sep = ",")
 
 

@@ -6,7 +6,6 @@ library(tidyr)
 setwd("/.../Data/")
 
 ##Read in DEPMAP data
-setwd("C:/Users/James/Documents/GitHub/MetabolicDependencies/Data")
 DEPMAP <- fread("Achilles_gene_effect.csv", header = T, sep =",")
 ##Read in cell line info / identifiers
 cell_line_info <- read.csv("sample_info.csv", header = T, sep = ",")
@@ -31,12 +30,14 @@ identified.genes <- colnames(DEPMAP)
 # Change CCLE name to DepMap ID in DPEA
 identifiers <- select(cell_line_info, "CCLE_Name","DepMap_ID","culture_type")
 
-GSEA <- select(GSEA.data, "Cell","Media","Pathway","KS_Normalized")
+colnames(GSEA.data) <- gsub("Gene.Set","Pathway", colnames(GSEA.data))
+
+GSEA <- select(GSEA.data, "Sample","Media","Pathway","KS_Normalized")
 #GSEA <- GSEA[,1:5]
 GSEA <- as.data.frame(GSEA)
 
-GSEA <- merge(GSEA, identifiers, by.x = "Cell",by.y = "CCLE_Name")
-GSEA$Cell <- NULL #remove Cell column
+GSEA <- merge(GSEA, identifiers, by.x = "Sample",by.y = "CCLE_Name")
+GSEA$Sample <- NULL #remove Sample column
 
 depmap.cells <- rownames(DEPMAP)
 gsea.cells <- unique(GSEA$DepMap_ID)
@@ -109,6 +110,6 @@ library(tidyverse)
     }
   }
 
-write.csv(Correlations.final, file = "Corr_coefficients_NES_to_CERES.csv")
+write.csv(Correlations.All, file = "Corr_coefficients_NES_to_CERES.csv")
 
 
