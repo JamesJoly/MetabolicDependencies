@@ -10,8 +10,8 @@ GSEA.data.full <- data.table::fread("CCLE_GSEA_Metabolic_Pathways.csv",header=T)
 #output dir
 setwd("/.../IndividualDrugs/")
 
-Adherent.RPMI <- GSEA.data.full[GSEA.data.full$Media == "RPMI" & GSEA.data.full$Culture.Type == "Adherent",]
-Adherent.DMEM <- GSEA.data.full[GSEA.data.full$Media == "DMEM" & GSEA.data.full$Culture.Type == "Adherent",]
+Adherent.RPMI <- GSEA.data.full[GSEA.data.full$Media == "RPMI" & GSEA.data.full$Culture_type == "Adherent",]
+Adherent.DMEM <- GSEA.data.full[GSEA.data.full$Media == "DMEM" & GSEA.data.full$Culture_type == "Adherent",]
 
 #Proceed w/ Adherent RPMI first, change it here for DMEM
 GSEA.data.subsetted <- Adherent.RPMI
@@ -23,22 +23,22 @@ output.filename <- "Individual_Drug_Correlation_Results_Adherent_RPMI.csv"
 # Data preparation --------------------------------------------------------
 library(dplyr)
 PRISM.data <- dplyr::select(PRISM.data.full, matches("ccle_name"), matches("auc"), matches("name"), -matches("row_name"), matches("direction"))
-GSEA.data <- dplyr::select(GSEA.data.subsetted, matches("Cell"), matches("Pathway"), matches("KS_Normalized"))
+GSEA.data <- dplyr::select(GSEA.data.subsetted, matches("Sample"), matches("Gene.Set"), matches("KS_Normalized"))
 
 rm(PRISM.data.full)
 rm(GSEA.data.full)
 rm(GSEA.data.subsetted)
 
 PRISM.cells <- unique(PRISM.data$ccle_name) 
-GSEA.cells <- unique(GSEA.data$Cell) 
-GSEA.pathways <- unique(GSEA.data$Pathway) 
+GSEA.cells <- unique(GSEA.data$Sample) 
+GSEA.pathways <- unique(GSEA.data$Gene.Set) 
 PRISM.drugs <- unique(PRISM.data$name)
 
 cells <- intersect(GSEA.cells,PRISM.cells) #initial array trimming by overall cell overlap
 
 PRISM.data <- PRISM.data[PRISM.data$ccle_name %in% cells,]
 PRISM.data$auc <- -PRISM.data$auc #multiply by -1 to keep positive direction as negative growth
-GSEA.data <- GSEA.data[GSEA.data$Cell %in% cells,]
+GSEA.data <- GSEA.data[GSEA.data$Sample %in% cells,]
 
 ### The following code was written by BC and reviewed by JJ
 
@@ -58,10 +58,10 @@ for (i in 1:length(PRISM.drugs)) {
   temp.corr.results$Metabolic_Pathway <- GSEA.pathways
   
   for (j in 1:length(GSEA.pathways)) {
-    GSEA.hold <- GSEA.data[GSEA.data$Pathway==GSEA.pathways[j],]
+    GSEA.hold <- GSEA.data[GSEA.data$Gene.Set==GSEA.pathways[j],]
     #GSEA.hold <- GSEA.hold[abs(GSEA.hold$KS_Normalized) > 1.3,] #Filter for |NES| > 1.3
     
-    hold.cells <- intersect(GSEA.hold$Cell,PRISM.hold.drug$ccle_name)
+    hold.cells <- intersect(GSEA.hold$Sample,PRISM.hold.drug$ccle_name)
     PRISM.hold <- PRISM.hold.drug[PRISM.hold.drug$ccle_name %in% hold.cells,] #there are some drugs with multiple aucs per cell line
     dupes <- sum(duplicated(PRISM.hold$ccle_name))
     
@@ -79,10 +79,10 @@ for (i in 1:length(PRISM.drugs)) {
       PRISM.hold <- rbind(PRISM.not.duped,PRISM.merge)
     }
     
-    GSEA.hold <- GSEA.hold[GSEA.hold$Cell %in% hold.cells,]
+    GSEA.hold <- GSEA.hold[GSEA.hold$Sample %in% hold.cells,]
     #PRISM.hold <- PRISM.hold[order(PRISM.hold$ccle_name),]
     
-    merged.data <- merge(GSEA.hold, PRISM.hold, by.x = "Cell", by.y = "ccle_name")
+    merged.data <- merge(GSEA.hold, PRISM.hold, by.x = "Sample", by.y = "ccle_name")
     #sometimes theres a single value with na, let's just remove it
     merged.data <- na.omit(merged.data)
     

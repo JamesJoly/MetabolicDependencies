@@ -6,13 +6,9 @@ all_pathways <- GSA::GSA.read.gmt("KEGG_metabolic_pathways.gmt")
 data_in <- read.csv(file = "Corr_coefficients_NES_to_CERES.csv", header=T, sep = ",")
 
 
-adherent.rpmi <- data_in[data_in$Media == "RPMI",]
-adherent.rpmi$Media <- NULL
-adherent.rpmi$Culture.Type <- NULL
+adherent.rpmi <- data_in[data_in$Media == "RPMI",] %>% pivot_wider(id_cols = c("Gene","Pathway","corr.coefficient"),names_from = "Pathway",values_from = "corr.coefficient")
+adherent.dmem <- data_in[data_in$Media == "DMEM",] %>% pivot_wider(id_cols = c("Gene","Pathway","corr.coefficient"),names_from = "Pathway",values_from = "corr.coefficient")
 
-adherent.dmem <- data_in[data_in$Media == "DMEM",]
-adherent.dmem$Media <- NULL
-adherent.dmem$Culture.Type <- NULL
 
 
 
@@ -366,11 +362,8 @@ GSEA_custom <- function(input.df, gmt.list,
 all.dependencies.RPMI <- GSEA_custom(input.df = adherent.rpmi, gmt.list = all_pathways)
 all.dependencies.DMEM <- GSEA_custom(input.df = adherent.dmem, gmt.list = all_pathways)
 
-RPMI.GSEA <- all.dependencies.RPMI$GSEA.Results
-write.csv(RPMI.GSEA, file = "Genetic_PDEA_Adherent_RPMI.csv", row.names = F)
-
-DMEM.GSEA <- all.dependencies.DMEM$GSEA.Results
-write.csv(DMEM.GSEA, file = "Genetic_PDEA_Adherent_DMEM.csv", row.names = F)
+write.csv(all.dependencies.RPMI$GSEA.Results, file = "Genetic_PDEA_Adherent_RPMI.csv", row.names = F)
+write.csv(all.dependencies.DMEM$GSEA.Results, file = "Genetic_PDEA_Adherent_DMEM.csv", row.names = F)
 
 
 

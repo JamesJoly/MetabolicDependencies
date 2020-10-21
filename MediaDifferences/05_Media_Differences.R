@@ -1,16 +1,14 @@
 rm(list=ls(all=TRUE))
 
-setwd("/.../DependencyGSEA/")
+setwd("/.../Data/")
 data_in_DMEM <- read.csv(file = "Genetic_PDEA_Adherent_DMEM.csv", header = TRUE, sep = ",")
-
 data_in_RPMI <- read.csv(file = "Genetic_PDEA_Adherent_RPMI.csv", header = TRUE, sep = ",")
 
 
-data_in_DMEM$Weight <- -log10(data_in_DMEM$FDR_q_value)
+data_in_DMEM$Weight <- -log10(data_in_DMEM$FDR_q_value + 1e-6)
 data_in_DMEM$Weighted.KS_Normalized <- data_in_DMEM$KS_Normalized * data_in_DMEM$Weight
 
-data_in_RPMI[data_in_RPMI$FDR_q_value == 0,]$FDR_q_value <- data_in_RPMI[data_in_RPMI$FDR_q_value == 0,]$FDR_q_value + 1e-6
-data_in_RPMI$Weight <- -log10(data_in_RPMI$FDR_q_value)
+data_in_RPMI$Weight <- -log10(data_in_DMEM$FDR_q_value + 1e-6)
 data_in_RPMI$Weighted.KS_Normalized <- data_in_RPMI$KS_Normalized * data_in_RPMI$Weight
 
 library(dplyr)

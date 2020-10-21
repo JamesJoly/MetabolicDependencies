@@ -7,3 +7,6 @@ DependencyGSEA/.RData
 DependencyGSEA/.Rhistory
 Data/Corr_coefficients_NES_to_CERES.csv
 Data/CCLE_GSEA_Metabolic_Pathways.csv
+Data/Genetic_PDEA_Adherent_RPMI.csv
+Data/Genetic_PDEA_Adherent_DMEM.csv
+Data/Individual_Drug_Correlation_Results_Adherent_RPMI.csv

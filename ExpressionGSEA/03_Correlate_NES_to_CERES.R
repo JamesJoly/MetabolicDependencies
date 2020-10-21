@@ -110,6 +110,6 @@ library(tidyverse)
     }
   }
 
-write.csv(Correlations.All, file = "Corr_coefficients_NES_to_CERES.csv")
+write.csv(Correlations.All, file = "Corr_coefficients_NES_to_CERES.csv", row.names = F)
 
 
